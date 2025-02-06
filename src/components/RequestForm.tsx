@@ -67,7 +67,7 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
     console.log(key);
   };
 
-  const methods = ["GET", "POST", "PUT", "DELETE"] as const;
+  const methods = ["GET", "POST", "PUT", "DELETE", "PATCH"] as const;
 
   const methodOptions = methods.map((method) => ({
     label: method,
