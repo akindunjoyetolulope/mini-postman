@@ -1,24 +1,16 @@
-import { useState } from "react";
-import RequestForm from "./components/RequestForm";
-import ResponseViewer from "./components/ResponseViewer";
+import { StrictMode } from "react";
+import { store } from "./store/store.ts";
+import { Provider } from "react-redux";
 
-const App = () => {
-  const [response, setResponse] = useState(null);
+import Dashboard from "./pages";
 
+const App: React.FC = () => {
   return (
-    <div className="flex justify-center mx-auto p-2  h-[100dvh]">
-      <div className="max-w-[1200px] w-[100%]">
-        <h4 className="text-2xl font-bold">Mini Postman</h4>
-        <div className="flex gap-[16px] mt-[32px]">
-          <div className="w-full">
-            <RequestForm onResponse={setResponse} />
-          </div>
-          <div className="w-full ">
-            <ResponseViewer response={response} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <StrictMode>
+      <Provider store={store}>
+        <Dashboard />{" "}
+      </Provider>
+    </StrictMode>
   );
 };
 
