@@ -1,40 +1,47 @@
 import React, { useState } from "react";
-import { sendRequest } from "../utils/apiClient"; // Assume this handles API calls
-import { replaceEnvVariables } from "../utils/envHelper"; // Helper to replace env variables in strings
-import EnvironmentSettings from "./EnvironmentSettings"; // Component for managing environment variables
-import Button from "./ui/Button";
+import { sendRequest } from "../utils/apiClient";
+// import { replaceEnvVariables } from "../utils/envHelper";
+// import EnvironmentSettings from "./EnvironmentSettings";
+import { Button, Input, Select, Tabs, TabsProps } from "antd";
+import { SendHorizontal } from "lucide-react";
+import AuthorizationSection from "./AuthorizationSection";
+import { useAppSelector } from "../store/hooks";
+import { apiKey, authType, bearerToken } from "../slices/authorization-slice";
+import HeadersSection from "./HeadersSection";
+import { headers } from "../slices/header-slice";
 
 const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [method, setMethod] = useState("GET");
   const [url, setUrl] = useState("");
-  const [headers, setHeaders] = useState("{}");
   const [body, setBody] = useState("{}");
-  const [authType, setAuthType] = useState("none");
-  const [apiKey, setApiKey] = useState("");
-  const [bearerToken, setBearerToken] = useState("");
+
+  // for headers
+  const _headers = useAppSelector(headers);
+
+  // for authorization
+  const _authType = useAppSelector(authType);
+  const _apiKey = useAppSelector(apiKey);
+  const _bearerToken = useAppSelector(bearerToken);
+
   const [file, setFile] = useState<File | null>(null);
-  const [envVars, setEnvVars] = useState<Record<string, string>>(() => {
-    return JSON.parse(localStorage.getItem("envVars") || "{}");
-  });
+
+  // const [envVars, setEnvVars] = useState<Record<string, string>>(() => {
+  //   return JSON.parse(localStorage.getItem("envVars") || "{}");
+  // });
 
   const handleSubmit = async (e: React.FormEvent) => {
     setIsLoading(true);
     e.preventDefault();
 
-    // Replace environment variables in URL, headers, and body
-    const processedUrl = replaceEnvVariables(url, envVars);
-    const processedHeaders = replaceEnvVariables(headers, envVars);
-    const processedBody = replaceEnvVariables(body, envVars);
-
-    let parsedHeaders = processedHeaders ? JSON.parse(processedHeaders) : {};
-    let parsedBody = processedBody ? JSON.parse(processedBody) : {};
+    let parsedHeaders = _headers ? JSON.parse(_headers) : {};
+    let parsedBody = body ? JSON.parse(body) : {};
 
     // Add authentication headers based on selection
-    if (authType === "apiKey" && apiKey) {
-      parsedHeaders["Authorization"] = apiKey;
-    } else if (authType === "bearer" && bearerToken) {
-      parsedHeaders["Authorization"] = `Bearer ${bearerToken}`;
+    if (_authType === "apiKey" && _apiKey) {
+      parsedHeaders["Authorization"] = _apiKey;
+    } else if (_authType === "bearer" && _bearerToken) {
+      parsedHeaders["Authorization"] = `Bearer ${_bearerToken}`;
     }
 
     // If file is selected, send it using FormData
@@ -45,96 +52,92 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
       parsedHeaders["Content-Type"] = "multipart/form-data";
     }
 
-    // Send the request
-    const apiResponse = await sendRequest(
-      method,
-      processedUrl,
-      parsedHeaders,
-      parsedBody
-    );
+    const response = await sendRequest(method, url, parsedHeaders, parsedBody);
 
-    onResponse(apiResponse);
+    onResponse(response);
     setIsLoading(false);
   };
 
-  const handleEnvVarsChange = (newEnvVars: Record<string, string>) => {
-    setEnvVars(newEnvVars);
-    localStorage.setItem("envVars", JSON.stringify(newEnvVars));
+  // const handleEnvVarsChange = (newEnvVars: Record<string, string>) => {
+  //   setEnvVars(newEnvVars);
+  //   localStorage.setItem("envVars", JSON.stringify(newEnvVars));
+  // };
+
+  const onChange = (key: string) => {
+    console.log(key);
   };
 
+  const methods = ["GET", "POST", "PUT", "DELETE"] as const;
+
+  const methodOptions = methods.map((method) => ({
+    label: method,
+    value: method,
+  }));
+
+  const items: TabsProps["items"] = [
+    {
+      key: "1",
+      label: "Params",
+      children: "Content of Tab Pane 1",
+    },
+    {
+      key: "2",
+      label: "Authorization",
+      children: <AuthorizationSection />,
+    },
+    {
+      key: "3",
+      label: "Headers",
+      children: <HeadersSection />,
+    },
+    {
+      key: "4",
+      label: "Body",
+      children: "Content of Tab Pane 3",
+    },
+  ];
+
   return (
-    <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="p-4 border rounded-lg space-y-4">
+    <div className="space-y-6 p-[8px]">
+      <form onSubmit={handleSubmit}>
         {/* Method & URL Input */}
-        <div className="flex space-x-2">
-          <select
+        <div className="flex border p-2 border-gray-300 rounded-lg  items-center space-x-2 gap-[5px]">
+          <Select
+            defaultValue="GET"
+            style={{ width: 120 }}
             value={method}
-            onChange={(e) => setMethod(e.target.value)}
-            className="p-2 border"
-          >
-            {["GET", "POST", "PUT", "DELETE"].map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
-          <input
-            type="text"
+            onChange={(e) => setMethod(e)}
+            options={methodOptions}
+          />
+
+          <Input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="Enter API URL"
-            className="flex-grow p-2 border"
+            className="flex-grow p-2"
           />
-          <Button
-            disable={isLoading}
-            onClick={() => {}}
-            type="submit"
-            text="Send"
-            isLoading={isLoading}
-          />
+
+          <div>
+            <Button
+              icon={<SendHorizontal size={16} strokeWidth={1} />}
+              disabled={isLoading}
+              htmlType="submit"
+              loading={isLoading}
+              color="primary"
+              variant="solid"
+            >
+              Send
+            </Button>
+          </div>
         </div>
 
-        {/* Authentication Section */}
-        <div className="space-y-2">
-          <label className="font-semibold">Authentication:</label>
-          <select
-            value={authType}
-            onChange={(e) => setAuthType(e.target.value)}
-            className="p-2 border w-full"
-          >
-            <option value="none">None</option>
-            <option value="apiKey">API Key</option>
-            <option value="bearer">Bearer Token</option>
-          </select>
-
-          {authType === "apiKey" && (
-            <input
-              type="text"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="Enter API Key"
-              className="w-full p-2 border"
-            />
-          )}
-
-          {authType === "bearer" && (
-            <input
-              type="text"
-              value={bearerToken}
-              onChange={(e) => setBearerToken(e.target.value)}
-              placeholder="Enter Bearer Token"
-              className="w-full p-2 border"
-            />
-          )}
+        {/* Tab Section */}
+        <div className="space-y-2 space-x-2">
+          <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
         </div>
 
-        {/* Headers & Body Input */}
-        <textarea
-          value={headers}
-          onChange={(e) => setHeaders(e.target.value)}
-          placeholder="Headers (JSON format)"
-          className="w-full p-2 border"
-        />
+        {/* Body Input */}
+
         {method !== "GET" && (
           <textarea
             value={body}
@@ -158,7 +161,7 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
       </form>
 
       {/* Environment Variables Section */}
-      <EnvironmentSettings onSave={handleEnvVarsChange} />
+      {/* <EnvironmentSettings onSave={handleEnvVarsChange} /> */}
 
       {/* Response Validation Section */}
     </div>

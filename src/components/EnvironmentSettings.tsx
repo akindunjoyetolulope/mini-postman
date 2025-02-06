@@ -1,5 +1,5 @@
+import { Button } from "antd";
 import { useState, useEffect } from "react";
-import Button from "./ui/Button";
 
 const EnvironmentSettings = ({
   onSave,
@@ -39,11 +39,15 @@ const EnvironmentSettings = ({
       ))}
 
       <div className="mt-2">
-        <Button
-          onClick={handleAddVariable}
-          text="Add Variable"
-          isLoading={false}
-        />
+        <Button onClick={handleAddVariable} loading={false}>
+          Add Variable
+        </Button>
+
+        <div className="grid grid-cols-4 gap-4">
+          <div>01</div>
+
+          <div>09</div>
+        </div>
       </div>
     </div>
   );
