@@ -5,6 +5,7 @@ import RequestForm from "../components/RequestForm";
 
 import { Layout, Splitter } from "antd";
 import { getScreenWidth } from "../utils/helper";
+import { Boxes, Vault } from "lucide-react";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -16,10 +17,23 @@ const Dashboard = () => {
       <Sider
         collapsible
         trigger={null}
-        width="50px"
+        width={`${getScreenWidth() > 1024 ? "100px" : "50px"}`}
         className="!bg-[#272822]"
         defaultCollapsed={false}
-      ></Sider>
+      >
+        <div className="mt-[72px]">
+          <div className="flex flex-col gap-5 p-[8px] text-white">
+            <div className="flex flex-col justify-center items-center p-4">
+              <Boxes size={20} strokeWidth={1} />
+              <p className="text-[10px]">Collections</p>
+            </div>
+            <div className="flex flex-col justify-center items-center p-4 bg-[#3C3D38] rounded-[8px]">
+              <Vault size={24} strokeWidth={1} />
+              <p className="text-[10px]">Environments</p>
+            </div>
+          </div>
+        </div>
+      </Sider>
 
       <Layout>
         <Header className="p-0 !bg-[#fff]" />
@@ -31,7 +45,7 @@ const Dashboard = () => {
             {getScreenWidth() > 1024 && (
               <Splitter.Panel defaultSize="20%" min="20%" max="40%">
                 <div className="space-y-6 p-[8px]">
-                  <h3 className="font-bold">Environment Settings</h3>
+                  <h3 className="font-bold">Environment</h3>
                 </div>
               </Splitter.Panel>
             )}

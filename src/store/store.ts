@@ -1,11 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authorizationReducer from "../slices/authorization-slice";
 import headersReducer from "../slices/header-slice";
+import MethodReducer from "../slices/method-slice";
+import BodyReducer from "../slices/body-slice";
 
 export const store = configureStore({
   reducer: {
     authorization: authorizationReducer,
     headers: headersReducer,
+    method: MethodReducer,
+    body: BodyReducer,
   },
 });
 
