@@ -9,9 +9,9 @@ interface Value {
   description: string;
 }
 
-interface Props {
-  title: string;
-}
+// interface Props {
+//   title: string;
+// }
 
 export default function VariableTable() {
   const [inputs, setInputs] = React.useState([
@@ -55,19 +55,19 @@ export default function VariableTable() {
     }
   }, [inputs]);
 
-  const addInputField = () => {
-    setInputs((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        value: {
-          key: "",
-          value: "",
-          description: "",
-        },
-      },
-    ]);
-  };
+  //   const addInputField = () => {
+  //     setInputs((prev) => [
+  //       ...prev,
+  //       {
+  //         id: prev.length + 1,
+  //         value: {
+  //           key: "",
+  //           value: "",
+  //           description: "",
+  //         },
+  //       },
+  //     ]);
+  //   };
 
   return (
     <div>
