@@ -1,0 +1,10 @@
+.variable-input {
+    border-color: transparent !important;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.variable-input:focus {
+    border-color: #1890ff !important;
+    /* Ant Design default blue */
+    box-shadow: none !important;
+}

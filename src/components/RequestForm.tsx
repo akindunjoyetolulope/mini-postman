@@ -5,16 +5,28 @@ import { sendRequest } from "../utils/apiClient";
 import { Button, Input, Select, Tabs, TabsProps } from "antd";
 import { SendHorizontal } from "lucide-react";
 import AuthorizationSection from "./AuthorizationSection";
-import { useAppSelector } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { apiKey, authType, bearerToken } from "../slices/authorization-slice";
 import HeadersSection from "./HeadersSection";
 import { headers } from "../slices/header-slice";
+import VariableTable from "./ui/VariableTable";
+import { methodType, setMethodType } from "../slices/method-slice";
+import { methodTypes } from "../model/methodType";
+import BodySection from "./BodySection";
+import { body, file } from "../slices/body-slice";
 
 const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [method, setMethod] = useState("GET");
   const [url, setUrl] = useState("");
-  const [body, setBody] = useState("{}");
+
+  const dispatch = useAppDispatch();
+
+  // for body
+  const _body = useAppSelector(body);
+  const _file = useAppSelector(file);
+
+  // for method
+  const _methodType = useAppSelector(methodType);
 
   // for headers
   const _headers = useAppSelector(headers);
@@ -24,7 +36,7 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
   const _apiKey = useAppSelector(apiKey);
   const _bearerToken = useAppSelector(bearerToken);
 
-  const [file, setFile] = useState<File | null>(null);
+  // const [file, setFile] = useState<File | null>(null);
 
   // const [envVars, setEnvVars] = useState<Record<string, string>>(() => {
   //   return JSON.parse(localStorage.getItem("envVars") || "{}");
@@ -35,7 +47,7 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
     e.preventDefault();
 
     let parsedHeaders = _headers ? JSON.parse(_headers) : {};
-    let parsedBody = body ? JSON.parse(body) : {};
+    let parsedBody = _body ? JSON.parse(_body) : {};
 
     // Add authentication headers based on selection
     if (_authType === "apiKey" && _apiKey) {
@@ -45,14 +57,19 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
     }
 
     // If file is selected, send it using FormData
-    if (file) {
+    if (_file) {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", _file);
       parsedBody = formData;
       parsedHeaders["Content-Type"] = "multipart/form-data";
     }
 
-    const response = await sendRequest(method, url, parsedHeaders, parsedBody);
+    const response = await sendRequest(
+      _methodType,
+      url,
+      parsedHeaders,
+      parsedBody
+    );
 
     onResponse(response);
     setIsLoading(false);
@@ -67,18 +84,24 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
     console.log(key);
   };
 
-  const methods = ["GET", "POST", "PUT", "DELETE", "PATCH"] as const;
+  const _methodsTypes: methodTypes[] = [
+    "GET",
+    "POST",
+    "PUT",
+    "DELETE",
+    "PATCH",
+  ];
 
-  const methodOptions = methods.map((method) => ({
-    label: method,
-    value: method,
+  const methodOptions = _methodsTypes.map((methodType) => ({
+    label: methodType,
+    value: methodType,
   }));
 
   const items: TabsProps["items"] = [
     {
       key: "1",
       label: "Params",
-      children: "Content of Tab Pane 1",
+      children: <VariableTable />,
     },
     {
       key: "2",
@@ -93,7 +116,7 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
     {
       key: "4",
       label: "Body",
-      children: "Content of Tab Pane 3",
+      children: <BodySection />,
     },
   ];
 
@@ -103,10 +126,9 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
         {/* Method & URL Input */}
         <div className="flex border p-2 border-gray-300 rounded-lg  items-center space-x-2 gap-[5px]">
           <Select
-            defaultValue="GET"
             style={{ width: 120 }}
-            value={method}
-            onChange={(e) => setMethod(e)}
+            value={_methodType}
+            onChange={(e) => dispatch(setMethodType(e))}
             options={methodOptions}
           />
 
@@ -120,7 +142,7 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
           <div>
             <Button
               icon={<SendHorizontal size={16} strokeWidth={1} />}
-              disabled={isLoading}
+              disabled={!url}
               htmlType="submit"
               loading={isLoading}
               color="primary"
@@ -135,29 +157,6 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
         <div className="space-y-2 space-x-2">
           <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
         </div>
-
-        {/* Body Input */}
-
-        {method !== "GET" && (
-          <textarea
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            placeholder="Body (JSON format)"
-            className="w-full p-2 border"
-          />
-        )}
-
-        {/* File Upload Section */}
-        {method !== "GET" && (
-          <div>
-            <label className="font-semibold">Upload File:</label>
-            <input
-              type="file"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-              className="w-full p-2 border"
-            />
-          </div>
-        )}
       </form>
 
       {/* Environment Variables Section */}
