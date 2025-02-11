@@ -23,13 +23,17 @@ const Dashboard = () => {
       >
         <div className="mt-[72px]">
           <div className="flex flex-col gap-5 p-[8px] text-white">
-            <div className="flex flex-col justify-center items-center p-4">
+            <div className="flex flex-col justify-center items-center p-2">
               <Boxes size={20} strokeWidth={1} />
-              <p className="text-[10px]">Collections</p>
+              {getScreenWidth() > 1024 && (
+                <p className="text-[10px]">Collections</p>
+              )}
             </div>
-            <div className="flex flex-col justify-center items-center p-4 bg-[#3C3D38] rounded-[8px]">
+            <div className="flex flex-col justify-center items-center p-2 bg-[#3C3D38] rounded-[8px]">
               <Vault size={24} strokeWidth={1} />
-              <p className="text-[10px]">Environments</p>
+              {getScreenWidth() > 1024 && (
+                <p className="text-[10px]">Environments</p>
+              )}
             </div>
           </div>
         </div>
