@@ -66,7 +66,7 @@ const Dashboard = () => {
           </Splitter>
         </Content>
 
-        <Footer className="text-center">
+        <Footer className="!p-[8px] text-center">
           Mini Postman ©{new Date().getFullYear()} Created by{" "}
           <a href="https://www.toluwalope.com/" target="_blank">
             9toluwalope
