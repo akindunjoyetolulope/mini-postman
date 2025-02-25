@@ -7,6 +7,7 @@ import {
   updateQuery,
   addQueryField,
   removeQueryField,
+  // checkAllQuery,
 } from "../../slices/url-slice";
 
 export default function VariableTable() {
@@ -25,7 +26,12 @@ export default function VariableTable() {
               <th className="text-left font-medium border border-gray-300 min-w-[30px]">
                 {params.length !== 1 ? (
                   <div className="flex justify-center">
-                    <Checkbox />
+                    <Checkbox
+                      name="checked"
+                      // onChange={(e) =>
+                      //   dispatch(checkAllQuery(e.target.checked))
+                      // }
+                    />
                   </div>
                 ) : null}
               </th>
@@ -50,6 +56,7 @@ export default function VariableTable() {
                   {lastInputIndex !== index ? (
                     <div className="flex justify-center">
                       <Checkbox
+                        name={`checked-${param.id}`}
                         checked={param.checked}
                         onChange={() => dispatch(checkQuery(param.id))}
                       />
@@ -62,6 +69,7 @@ export default function VariableTable() {
                     value={param.key}
                     className="variable-input"
                     placeholder="Key"
+                    name={`key-${param.id}`}
                     onChange={(e) => {
                       dispatch(
                         updateQuery({
@@ -78,6 +86,7 @@ export default function VariableTable() {
                     value={param.value}
                     className="variable-input"
                     placeholder="Value"
+                    name={`value-${param.id}`}
                     onChange={(e) => {
                       dispatch(
                         updateQuery({
@@ -94,6 +103,7 @@ export default function VariableTable() {
                     className="variable-input"
                     value={param.description}
                     placeholder="Description"
+                    name={`description-${param.id}`}
                     onChange={(e) => {
                       dispatch(
                         updateQuery({
