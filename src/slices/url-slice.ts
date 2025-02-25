@@ -70,8 +70,20 @@ const urlSlice = createSlice({
       action: PayloadAction<{ id: string; value: { [key: string]: string } }>
     ) {
       const paramToUpdate = state.param.find((p) => p.id === action.payload.id);
+
       if (paramToUpdate) {
         Object.assign(paramToUpdate, action.payload.value);
+
+        const checkedParams = state.param.filter((param) => param.checked);
+        const queryStart = state.url.indexOf("?");
+        const base = state.url.slice(0, queryStart);
+
+        state.url =
+          checkedParams.length > 0
+            ? `${base}?${checkedParams
+                .map((p) => `${p.key}=${p.value}`)
+                .join("&")}`
+            : "";
       }
     },
     addQueryField(state) {
