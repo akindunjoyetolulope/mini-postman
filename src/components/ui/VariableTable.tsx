@@ -7,7 +7,7 @@ import {
   updateQuery,
   addQueryField,
   removeQueryField,
-  // checkAllQuery,
+  checkAllQuery,
 } from "../../slices/url-slice";
 
 export default function VariableTable() {
@@ -28,9 +28,10 @@ export default function VariableTable() {
                   <div className="flex justify-center">
                     <Checkbox
                       name="checked"
-                      // onChange={(e) =>
-                      //   dispatch(checkAllQuery(e.target.checked))
-                      // }
+                      checked={params.every((param) => param.checked)}
+                      onChange={(e) =>
+                        dispatch(checkAllQuery(e.target.checked))
+                      }
                     />
                   </div>
                 ) : null}

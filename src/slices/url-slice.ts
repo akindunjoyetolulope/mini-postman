@@ -3,6 +3,7 @@ import { RootState } from "../store/store";
 import { v4 as uuidv4 } from "uuid";
 import { ParamType } from "../model/url";
 import {
+  filterUncheckedParams,
   parseMalformedQueryString,
   toAddQueryString,
   toRemoveQueryString,
@@ -17,7 +18,7 @@ const initialState: UrlState = {
   url: "",
   param: [
     {
-      id: uuidv4(),
+      id: "thelastQuery",
       checked: false,
       key: "",
       value: "",
@@ -33,10 +34,11 @@ const urlSlice = createSlice({
     setUrl(state, action: PayloadAction<string>) {
       state.url = action.payload;
 
-      let parsedParams = parseMalformedQueryString(action.payload);
-      let checkedParams = state.param.filter((param) => !param.checked);
+      let checkedParams = parseMalformedQueryString(action.payload);
+      let unCheckedParams = state.param.filter((param) => !param.checked);
+      let updateParams = filterUncheckedParams(checkedParams, unCheckedParams);
 
-      const mergedParams = [...parsedParams, ...checkedParams];
+      const mergedParams = [...checkedParams, ...updateParams];
 
       state.param = [...mergedParams];
     },
@@ -57,7 +59,9 @@ const urlSlice = createSlice({
     checkAllQuery(state, action: PayloadAction<boolean>) {
       state.param.forEach((param) => {
         state.url = action.payload
-          ? toAddQueryString(state.url, param)
+          ? action.payload !== param.checked
+            ? toAddQueryString(state.url, param)
+            : state.url
           : toRemoveQueryString(state.url, param);
       });
 
@@ -103,6 +107,12 @@ const urlSlice = createSlice({
       }
     },
     removeQueryField(state, action: PayloadAction<string>) {
+      state.param.forEach((param) => {
+        if (param.id === action.payload) {
+          state.url = toRemoveQueryString(state.url, param);
+        }
+      });
+
       state.param = state.param.filter((param) => param.id !== action.payload);
     },
   },

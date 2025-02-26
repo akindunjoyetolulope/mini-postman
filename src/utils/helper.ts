@@ -31,6 +31,14 @@ export function parseMalformedQueryString(str: string) {
   return result;
 }
 
+export function filterUncheckedParams(
+  checkedParams: ParamType[],
+  unCheckedParams: ParamType[]
+): ParamType[] {
+  const checkedKeys = new Set(checkedParams.map((param) => param.key));
+  return unCheckedParams.filter((param) => !checkedKeys.has(param.key));
+}
+
 export function toRemoveQueryString(url: string, obj: ParamType) {
   if (!obj || !obj.key || !obj.value) return url;
 
