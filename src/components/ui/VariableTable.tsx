@@ -1,73 +1,20 @@
-import * as React from "react";
 import { Checkbox, Input } from "antd";
-import "./variableTable.css";
 import { Trash2 } from "lucide-react";
-
-interface Value {
-  key: string;
-  value: string;
-  description: string;
-}
-
-// interface Props {
-//   title: string;
-// }
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  param,
+  checkQuery,
+  updateQuery,
+  addQueryField,
+  removeQueryField,
+  checkAllQuery,
+} from "../../slices/url-slice";
 
 export default function VariableTable() {
-  const [inputs, setInputs] = React.useState([
-    {
-      id: 1,
-      value: {
-        key: "",
-        value: "",
-        description: "",
-      },
-    },
-  ]);
+  const params = useAppSelector(param);
+  const dispatch = useAppDispatch();
 
-  const handleInputChange = (id: number, newValue: Value) => {
-    setInputs((prev) =>
-      prev.map((input) =>
-        input.id === id ? { ...input, value: newValue } : input
-      )
-    );
-  };
-
-  React.useEffect(() => {
-    const lastInput = inputs[inputs.length - 1];
-    if (
-      (lastInput.value.key.trim() !== "" ||
-        lastInput.value.value.trim() !== "" ||
-        lastInput.value.description.trim() !== "") &&
-      inputs.length > 1
-    ) {
-      setInputs((prev) => [
-        ...prev,
-        {
-          id: prev.length + 1,
-          value: {
-            key: "",
-            value: "",
-            description: "",
-          },
-        },
-      ]);
-    }
-  }, [inputs]);
-
-  //   const addInputField = () => {
-  //     setInputs((prev) => [
-  //       ...prev,
-  //       {
-  //         id: prev.length + 1,
-  //         value: {
-  //           key: "",
-  //           value: "",
-  //           description: "",
-  //         },
-  //       },
-  //     ]);
-  //   };
+  const lastInputIndex = params.length - 1;
 
   return (
     <div>
@@ -76,82 +23,111 @@ export default function VariableTable() {
         <table className="w-full border-collapse border border-red-500">
           <thead>
             <tr className="px-1 py-1">
-              <th className="text-left font-medium border border-gray-300">
-                <div className="flex justify-center">
-                  <Checkbox />
-                </div>
+              <th className="text-left font-medium border border-gray-300 min-w-[30px]">
+                {params.length !== 1 ? (
+                  <div className="flex justify-center">
+                    <Checkbox
+                      name="checked"
+                      checked={params.every((param) => param.checked)}
+                      onChange={(e) =>
+                        dispatch(checkAllQuery(e.target.checked))
+                      }
+                    />
+                  </div>
+                ) : null}
               </th>
-              <th className="text-left font-medium px-4 py-2 border border-gray-300">
+              <th className="text-left font-medium px-4 py-2 border border-gray-300 min-w-[150px]">
                 Key
               </th>
-              <th className="text-left font-medium px-4 py-2 border border-gray-300">
+              <th className="text-left font-medium px-4 py-2 border border-gray-300 min-w-[150px]">
                 Value
               </th>
-              <th className="text-left  font-medium px-4 py-2 border border-gray-300">
+              <th className="text-left  font-medium px-4 py-2 border border-gray-300 min-w-[150px]">
                 Description
               </th>
-              <th className="text-right px-4 py-2 border border-gray-300">
+              <th className="text-right px-4 py-2 border border-gray-300 min-w-[150px]">
                 <button type="button">Bulk Edit</button>
               </th>
             </tr>
           </thead>
           <tbody>
-            {inputs.map((input) => (
-              <tr key={input.id}>
+            {params.map((param, index) => (
+              <tr key={param.id}>
                 <td className="px-1 py-1 border-gray-300 border">
-                  <div className="flex justify-center">
-                    {/* {(input.value.key ||
-                      input.value.value ||
-                      input.value.description) && } */}
-                    <Checkbox />
-                  </div>
+                  {lastInputIndex !== index ? (
+                    <div className="flex justify-center">
+                      <Checkbox
+                        name={`checked-${param.id}`}
+                        checked={param.checked}
+                        onChange={() => dispatch(checkQuery(param.id))}
+                      />
+                    </div>
+                  ) : null}
                 </td>
                 <td className="px-1 py-1 border-gray-300 border">
                   <Input
-                    key={input.id}
-                    value={input.value.key}
+                    key={param.id}
+                    value={param.key}
                     className="variable-input"
                     placeholder="Key"
-                    onChange={(e) =>
-                      handleInputChange(input.id, {
-                        ...input.value,
-                        key: e.target.value,
-                      })
-                    }
+                    name={`key-${param.id}`}
+                    onChange={(e) => {
+                      dispatch(
+                        updateQuery({
+                          id: param.id,
+                          value: { key: e.target.value },
+                        })
+                      );
+                      dispatch(addQueryField());
+                    }}
                   />
                 </td>
                 <td className="px-1 py-1 border-gray-300 border">
                   <Input
-                    value={input.value.value}
+                    value={param.value}
                     className="variable-input"
                     placeholder="Value"
-                    onChange={(e) =>
-                      handleInputChange(input.id, {
-                        ...input.value,
-                        value: e.target.value,
-                      })
-                    }
+                    name={`value-${param.id}`}
+                    onChange={(e) => {
+                      dispatch(
+                        updateQuery({
+                          id: param.id,
+                          value: { value: e.target.value },
+                        })
+                      );
+                      dispatch(addQueryField());
+                    }}
                   />
                 </td>
                 <td className="px-1 py-1 border-gray-300 border">
                   <Input
                     className="variable-input"
-                    value={input.value.description}
+                    value={param.description}
                     placeholder="Description"
-                    onChange={(e) =>
-                      handleInputChange(input.id, {
-                        ...input.value,
-                        description: e.target.value,
-                      })
-                    }
+                    name={`description-${param.id}`}
+                    onChange={(e) => {
+                      dispatch(
+                        updateQuery({
+                          id: param.id,
+                          value: { description: e.target.value },
+                        })
+                      );
+                      dispatch(addQueryField());
+                    }}
                   />
                 </td>
                 <td className="px-4 py-1 border-gray-300 border">
-                  <div className="flex justify-end">
-                    <button type="button">
-                      <Trash2 size={20} strokeWidth={1} />
-                    </button>
-                  </div>
+                  {lastInputIndex !== index ? (
+                    <div className="flex justify-end">
+                      <button type="button">
+                        <Trash2
+                          size={20}
+                          strokeWidth={1}
+                          onClick={() => dispatch(removeQueryField(param.id))}
+                        />
+                      </button>
+                    </div>
+                  ) : null}
                 </td>
               </tr>
             ))}

@@ -3,6 +3,7 @@ import authorizationReducer from "../slices/authorization-slice";
 import headersReducer from "../slices/header-slice";
 import MethodReducer from "../slices/method-slice";
 import BodyReducer from "../slices/body-slice";
+import UrlReducer from "../slices/url-slice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     headers: headersReducer,
     method: MethodReducer,
     body: BodyReducer,
+    url: UrlReducer,
   },
 });
 

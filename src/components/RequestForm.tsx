@@ -14,12 +14,15 @@ import { methodType, setMethodType } from "../slices/method-slice";
 import { methodTypes } from "../model/methodType";
 import BodySection from "./BodySection";
 import { body, file } from "../slices/body-slice";
+import { setUrl, url } from "../slices/url-slice";
 
 const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [url, setUrl] = useState("");
 
   const dispatch = useAppDispatch();
+
+  // for url
+  const _url = useAppSelector(url);
 
   // for body
   const _body = useAppSelector(body);
@@ -66,7 +69,7 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
 
     const response = await sendRequest(
       _methodType,
-      url,
+      _url,
       parsedHeaders,
       parsedBody
     );
@@ -79,6 +82,10 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
   //   setEnvVars(newEnvVars);
   //   localStorage.setItem("envVars", JSON.stringify(newEnvVars));
   // };
+
+  const handleUrlChange = (newUrl: string) => {
+    dispatch(setUrl(newUrl));
+  };
 
   const onChange = (key: string) => {
     console.log(key);
@@ -133,8 +140,8 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
           />
 
           <Input
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            value={_url}
+            onChange={(e) => handleUrlChange(e.target.value)}
             placeholder="Enter API URL"
             className="flex-grow p-2"
           />
@@ -142,7 +149,7 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
           <div>
             <Button
               icon={<SendHorizontal size={16} strokeWidth={1} />}
-              disabled={!url}
+              disabled={!_url}
               htmlType="submit"
               loading={isLoading}
               color="primary"

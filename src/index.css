@@ -37,3 +37,13 @@ button {
     transform: rotate(360deg);
   }
 }
+
+.variable-input {
+  border-color: transparent !important;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.variable-input:focus {
+  border-color: #1890ff !important;
+  box-shadow: none !important;
+}
