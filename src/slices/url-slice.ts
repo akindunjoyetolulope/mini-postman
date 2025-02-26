@@ -18,7 +18,7 @@ const initialState: UrlState = {
   url: "",
   param: [
     {
-      id: "thelastQuery",
+      id: uuidv4(),
       checked: false,
       key: "",
       value: "",
@@ -87,7 +87,7 @@ const urlSlice = createSlice({
             ? `${base}?${checkedParams
                 .map((p) => `${p.key}=${p.value}`)
                 .join("&")}`
-            : "";
+            : state.url;
       }
     },
     addQueryField(state) {
