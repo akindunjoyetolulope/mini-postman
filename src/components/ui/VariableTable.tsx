@@ -1,4 +1,4 @@
-import { Checkbox, Input } from "antd";
+import { Button, Checkbox, Input } from "antd";
 import { Trash2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -7,7 +7,7 @@ import {
   updateQuery,
   addQueryField,
   removeQueryField,
-  checkAllQuery,
+  // checkAllQuery,
 } from "../../slices/url-slice";
 
 export default function VariableTable() {
@@ -28,10 +28,10 @@ export default function VariableTable() {
                   <div className="flex justify-center">
                     <Checkbox
                       name="checked"
-                      checked={params.every((param) => param.checked)}
-                      onChange={(e) =>
-                        dispatch(checkAllQuery(e.target.checked))
-                      }
+                      // checked={params.every((param) => param.checked)}
+                      // onChange={(e) =>
+                      //   dispatch(checkAllQuery(e.target.checked))
+                      // }
                     />
                   </div>
                 ) : null}
@@ -45,8 +45,10 @@ export default function VariableTable() {
               <th className="text-left  font-medium px-4 py-2 border border-gray-300 min-w-[150px]">
                 Description
               </th>
-              <th className="text-right px-4 py-2 border border-gray-300 min-w-[150px]">
-                <button type="button">Bulk Edit</button>
+              <th className="text-right px-4 border border-gray-300 min-w-[150px]">
+                <Button color="primary" disabled={true} variant="solid">
+                  Bulk Edit
+                </Button>
               </th>
             </tr>
           </thead>
