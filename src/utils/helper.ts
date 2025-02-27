@@ -17,7 +17,7 @@ export function parseMalformedQueryString(str: string) {
   pairs.forEach((pair) => {
     let [key, value] = pair.split("=");
     if (key === undefined || key.trim() === "") key = " ";
-    if (value === undefined) value = " ";
+    if (value === undefined || key.trim() === "") value = " ";
 
     result.push({
       id: uuidv4(),
@@ -40,7 +40,7 @@ export function filterUncheckedParams(
 }
 
 export function toRemoveQueryString(url: string, obj: ParamType) {
-  if (!obj || !obj.key || !obj.value) return url;
+  if (!obj) return url;
 
   const queryStart = url.indexOf("?");
   if (queryStart === -1) return url;
@@ -56,7 +56,7 @@ export function toRemoveQueryString(url: string, obj: ParamType) {
 }
 
 export function toAddQueryString(url: string, obj: ParamType) {
-  if (!obj || !obj.key || !obj.value) return url;
+  if (!obj) return url;
 
   const queryStart = url.indexOf("?");
   if (queryStart === -1) return `${url}?${obj.key}=${obj.value}`;

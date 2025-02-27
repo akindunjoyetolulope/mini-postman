@@ -14,6 +14,12 @@ export default function VariableTable() {
   const params = useAppSelector(param);
   const dispatch = useAppDispatch();
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "=" || event.key === "&") {
+      event.preventDefault();
+    }
+  };
+
   const lastInputIndex = params.length - 1;
 
   return (
@@ -73,11 +79,12 @@ export default function VariableTable() {
                     className="variable-input"
                     placeholder="Key"
                     name={`key-${param.id}`}
+                    onKeyPress={handleKeyPress}
                     onChange={(e) => {
                       dispatch(
                         updateQuery({
                           id: param.id,
-                          value: { key: e.target.value },
+                          value: { key: e.target.value.replace(/[=&]/g, "") },
                         })
                       );
                       dispatch(addQueryField());
@@ -90,11 +97,12 @@ export default function VariableTable() {
                     className="variable-input"
                     placeholder="Value"
                     name={`value-${param.id}`}
+                    onKeyPress={handleKeyPress}
                     onChange={(e) => {
                       dispatch(
                         updateQuery({
                           id: param.id,
-                          value: { value: e.target.value },
+                          value: { value: e.target.value.replace(/[=&]/g, "") },
                         })
                       );
                       dispatch(addQueryField());
