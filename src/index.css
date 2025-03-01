@@ -15,6 +15,19 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html[data-theme="dark"] {
+  --custom-primary: #ff4d4f;
+  --custom-text: #ffffff;
+  --custom-bg: #141414;
+}
+
+html[data-theme="light"] {
+  --custom-primary: #1890ff;
+  --custom-text: #000000;
+  --custom-bg: #ffffff;
+}
+
+
 button {
   cursor: pointer;
 }
@@ -40,10 +53,16 @@ button {
 
 .variable-input {
   border-color: transparent !important;
+  background-color: transparent !important;
   transition: border-color 0.2s ease-in-out;
 }
 
 .variable-input:focus {
   border-color: #1890ff !important;
+  background-color: transparent !important;
   box-shadow: none !important;
+}
+
+.transparent {
+  background-color: transparent !important;
 }

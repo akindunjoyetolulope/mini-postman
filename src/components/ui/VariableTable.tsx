@@ -9,16 +9,11 @@ import {
   removeQueryField,
   // checkAllQuery,
 } from "../../slices/url-slice";
+import { ThemedTd, ThemedTh } from "./CustomTable";
 
 export default function VariableTable() {
   const params = useAppSelector(param);
   const dispatch = useAppDispatch();
-
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "=" || event.key === "&") {
-      event.preventDefault();
-    }
-  };
 
   const lastInputIndex = params.length - 1;
 
@@ -26,10 +21,10 @@ export default function VariableTable() {
     <div>
       <h3 className="font-semibold mb-2">Query Params</h3>
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse border border-red-500">
+        <table className="w-full border-collapse">
           <thead>
             <tr className="px-1 py-1">
-              <th className="text-left font-medium border border-gray-300 min-w-[30px]">
+              <ThemedTh className="text-left font-medium  min-w-[30px]">
                 {params.length !== 1 ? (
                   <div className="flex justify-center">
                     <Checkbox
@@ -41,27 +36,27 @@ export default function VariableTable() {
                     />
                   </div>
                 ) : null}
-              </th>
-              <th className="text-left font-medium px-4 py-2 border border-gray-300 min-w-[150px]">
+              </ThemedTh>
+              <ThemedTh className="text-left font-medium px-4 py-2  min-w-[150px]">
                 Key
-              </th>
-              <th className="text-left font-medium px-4 py-2 border border-gray-300 min-w-[150px]">
+              </ThemedTh>
+              <ThemedTh className="text-left font-medium px-4 py-2  min-w-[150px]">
                 Value
-              </th>
-              <th className="text-left  font-medium px-4 py-2 border border-gray-300 min-w-[150px]">
+              </ThemedTh>
+              <ThemedTh className="text-left  font-medium px-4 py-2  min-w-[150px]">
                 Description
-              </th>
-              <th className="text-right px-4 border border-gray-300 min-w-[150px]">
+              </ThemedTh>
+              <ThemedTh className="text-right px-4  min-w-[150px]">
                 <Button color="primary" disabled={true} variant="solid">
                   Bulk Edit
                 </Button>
-              </th>
+              </ThemedTh>
             </tr>
           </thead>
           <tbody>
             {params.map((param, index) => (
               <tr key={param.id}>
-                <td className="px-1 py-1 border-gray-300 border">
+                <ThemedTd className="px-1 py-1 ">
                   {lastInputIndex !== index ? (
                     <div className="flex justify-center">
                       <Checkbox
@@ -71,45 +66,43 @@ export default function VariableTable() {
                       />
                     </div>
                   ) : null}
-                </td>
-                <td className="px-1 py-1 border-gray-300 border">
+                </ThemedTd>
+                <ThemedTd className="px-1 py-1 ">
                   <Input
                     key={param.id}
                     value={param.key}
                     className="variable-input"
                     placeholder="Key"
                     name={`key-${param.id}`}
-                    onKeyPress={handleKeyPress}
                     onChange={(e) => {
                       dispatch(
                         updateQuery({
                           id: param.id,
-                          value: { key: e.target.value.replace(/[=&]/g, "") },
+                          value: { key: e.target.value },
                         })
                       );
                       dispatch(addQueryField());
                     }}
                   />
-                </td>
-                <td className="px-1 py-1 border-gray-300 border">
+                </ThemedTd>
+                <ThemedTd className="px-1 py-1 ">
                   <Input
                     value={param.value}
                     className="variable-input"
                     placeholder="Value"
                     name={`value-${param.id}`}
-                    onKeyPress={handleKeyPress}
                     onChange={(e) => {
                       dispatch(
                         updateQuery({
                           id: param.id,
-                          value: { value: e.target.value.replace(/[=&]/g, "") },
+                          value: { value: e.target.value },
                         })
                       );
                       dispatch(addQueryField());
                     }}
                   />
-                </td>
-                <td className="px-1 py-1 border-gray-300 border">
+                </ThemedTd>
+                <ThemedTd className="px-1 py-1 ">
                   <Input
                     className="variable-input"
                     value={param.description}
@@ -125,8 +118,8 @@ export default function VariableTable() {
                       dispatch(addQueryField());
                     }}
                   />
-                </td>
-                <td className="px-4 py-1 border-gray-300 border">
+                </ThemedTd>
+                <ThemedTd className="px-4 py-1 ">
                   {lastInputIndex !== index ? (
                     <div className="flex justify-end">
                       <button type="button">
@@ -138,7 +131,7 @@ export default function VariableTable() {
                       </button>
                     </div>
                   ) : null}
-                </td>
+                </ThemedTd>
               </tr>
             ))}
           </tbody>

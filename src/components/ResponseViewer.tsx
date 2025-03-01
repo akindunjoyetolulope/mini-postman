@@ -1,4 +1,5 @@
 import ReactJson from "react-json-view";
+import CustomDiv from "./ui/CustomDiv";
 
 const ResponseViewer = ({ response }: { response: any }) => {
   if (!response)
@@ -25,7 +26,7 @@ const ResponseViewer = ({ response }: { response: any }) => {
         </div>
       </div>
 
-      <div className="p-4 border rounded-lg h-[50dvh] overflow-auto bg-[#272822]">
+      <CustomDiv className="p-4 border rounded-lg h-[50dvh] overflow-auto bg-[#272822]">
         {!response.error && (
           <ReactJson
             src={response.data}
@@ -33,7 +34,7 @@ const ResponseViewer = ({ response }: { response: any }) => {
             theme="monokai"
           />
         )}
-      </div>
+      </CustomDiv>
     </div>
   );
 };
