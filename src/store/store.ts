@@ -4,6 +4,8 @@ import headersReducer from "../slices/header-slice";
 import MethodReducer from "../slices/method-slice";
 import BodyReducer from "../slices/body-slice";
 import UrlReducer from "../slices/url-slice";
+import PageReducer from "../slices/page-slice";
+import ThemeReducer from "../slices/theme-slice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ export const store = configureStore({
     method: MethodReducer,
     body: BodyReducer,
     url: UrlReducer,
+    page: PageReducer,
+    theme: ThemeReducer,
   },
 });
 

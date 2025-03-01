@@ -15,6 +15,7 @@ import { methodTypes } from "../model/methodType";
 import BodySection from "./BodySection";
 import { body, file } from "../slices/body-slice";
 import { setUrl, url } from "../slices/url-slice";
+import CustomDiv from "./ui/CustomDiv";
 
 const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -131,9 +132,10 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
     <div className="space-y-6 p-[8px]">
       <form onSubmit={handleSubmit}>
         {/* Method & URL Input */}
-        <div className="flex border p-2 border-gray-300 rounded-lg  items-center space-x-2 gap-[5px]">
+        <CustomDiv className="flex p-2 rounded-lg  items-center space-x-2 gap-[5px]">
           <Select
             style={{ width: 120 }}
+            dropdownStyle={{ width: 100 }}
             value={_methodType}
             onChange={(e) => dispatch(setMethodType(e))}
             options={methodOptions}
@@ -158,7 +160,7 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
               Send
             </Button>
           </div>
-        </div>
+        </CustomDiv>
 
         {/* Tab Section */}
         <div className="space-y-2 space-x-2">

@@ -1,57 +1,61 @@
 import * as React from "react";
-
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import ResponseViewer from "../components/ResponseViewer";
 import RequestForm from "../components/RequestForm";
 
-import { Layout, Splitter } from "antd";
+import { Layout, Segmented, Splitter } from "antd";
 import { getScreenWidth } from "../utils/helper";
-import { Boxes, Vault } from "lucide-react";
+import { MoonOutlined, SunOutlined } from "@ant-design/icons";
+import { pageType, setPageType } from "../slices/page-slice";
+import { pageTypes } from "../model/pageType";
+import { setTheme, themeType } from "../slices/theme-slice";
+import { themeTypes } from "../model/themeType";
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Footer } = Layout;
 
 const Dashboard = () => {
   const [response, setResponse] = React.useState(null);
+  const dispatch = useAppDispatch();
+  const _pageType = useAppSelector(pageType);
+  const _themeType = useAppSelector(themeType);
 
   return (
     <Layout className="!min-h-[100dvh]">
-      <Sider
-        collapsible
-        trigger={null}
-        width={`${getScreenWidth() > 1024 ? "100px" : "50px"}`}
-        className="!bg-[#272822]"
-        defaultCollapsed={false}
-      >
-        <div className="mt-[72px]">
-          <div className="flex flex-col gap-5 p-[8px] text-white">
-            <div className="flex flex-col justify-center items-center p-2">
-              <Boxes size={20} strokeWidth={1} />
-              {getScreenWidth() > 1024 && (
-                <p className="text-[10px]">Collections</p>
-              )}
-            </div>
-            <div className="flex flex-col justify-center items-center p-2 bg-[#3C3D38] rounded-[8px]">
-              <Vault size={24} strokeWidth={1} />
-              {getScreenWidth() > 1024 && (
-                <p className="text-[10px]">Environments</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </Sider>
-
       <Layout>
-        <Header className="p-0 !bg-[#fff]" />
-        <Content className="m-[8px] !bg-[#fff] rounded-lg !h-[calc(100dvh-200px)]">
+        <Header className="flex justify-between items-center !h-[40px] !px-[8px]">
+          <div></div>
+          <div>
+            <Segmented
+              shape="round"
+              value={_themeType}
+              options={[
+                { value: "light", icon: <SunOutlined /> },
+                { value: "dark", icon: <MoonOutlined /> },
+              ]}
+              onChange={(e) => dispatch(setTheme(e as themeTypes))}
+            />
+          </div>
+        </Header>
+        <div className="mt-[8px] pt-[4px] px-[4px] mx-[8px]">
+          <Segmented
+            className="!text-[12px] font-semibold"
+            value={_pageType}
+            onChange={(e) => dispatch(setPageType(e))}
+            options={["Collection", "Environment", "History"] as pageTypes[]}
+          />
+        </div>
+
+        <Content className="flex !mt-0 mx-[8px] mb-[8px] rounded-lg !h-[calc(100dvh-120px)]">
           <Splitter
             className="h-full"
             style={{ boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)" }}
           >
-            {getScreenWidth() > 1024 && (
-              <Splitter.Panel defaultSize="20%" min="20%" max="40%">
-                <div className="space-y-6 p-[8px]">
-                  <h3 className="font-bold">Environment</h3>
-                </div>
-              </Splitter.Panel>
+            {getScreenWidth() > 1280 && (
+              <Splitter.Panel
+                defaultSize="30%"
+                min="20%"
+                max="40%"
+              ></Splitter.Panel>
             )}
             <Splitter.Panel>
               <Splitter layout="vertical">
@@ -66,7 +70,7 @@ const Dashboard = () => {
           </Splitter>
         </Content>
 
-        <Footer className="!p-[8px] text-center">
+        <Footer className="!p-[2px] text-center !text-[12px]">
           Mini Postman ©{new Date().getFullYear()} Created by{" "}
           <a href="https://www.toluwalope.com/" target="_blank">
             9toluwalope
