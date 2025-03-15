@@ -1,121 +1,137 @@
-import { Button, Checkbox, Input } from "antd";
-import { Trash2 } from "lucide-react";
+import { Checkbox, Input, Select } from "antd";
+import { ThemedTd, ThemedTh } from "./CustomTable";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
-  param,
-  checkQuery,
-  updateQuery,
-  addQueryField,
-  removeQueryField,
-  // checkAllQuery,
-} from "../../slices/url-slice";
-import { ThemedTd, ThemedTh } from "./CustomTable";
+  addVariableField,
+  checkVariableField,
+  removeVariableField,
+  updateVariable,
+  filterVariable,
+  variables,
+} from "../../slices/variable-slice";
+import { Ellipsis, Search, Trash2 } from "lucide-react";
 
 export default function VariableTable() {
-  const params = useAppSelector(param);
+  const _variables = useAppSelector(variables);
   const dispatch = useAppDispatch();
 
-  const lastInputIndex = params.length - 1;
+  const lastInputIndex = _variables.length - 1;
 
   return (
     <div>
-      <h3 className="font-semibold mb-2">Query Params</h3>
+      <div className="w-[250px] my-2">
+        <Input
+          prefix={<Search size={20} strokeWidth={1} />}
+          placeholder="Filter variable"
+          onChange={(e) => dispatch(filterVariable(e.target.value))}
+        />
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
             <tr className="px-1 py-1">
               <ThemedTh className="text-left font-medium  min-w-[30px]">
-                {params.length !== 1 ? (
-                  <div className="flex justify-center">
-                    <Checkbox
-                      name="checked"
-                      // checked={params.every((param) => param.checked)}
-                      // onChange={(e) =>
-                      //   dispatch(checkAllQuery(e.target.checked))
-                      // }
-                    />
-                  </div>
-                ) : null}
+                {/* {params.length !== 1 ? (
+                <div className="flex justify-center">
+                  <Checkbox
+                    name="checked"
+                    // checked={params.every((param) => param.checked)}
+                    // onChange={(e) =>
+                    //   dispatch(checkAllQuery(e.target.checked))
+                    // }
+                  />
+                </div>
+              ) : null} */}
               </ThemedTh>
               <ThemedTh className="text-left font-medium px-4 py-2  min-w-[150px]">
-                Key
+                Variable
               </ThemedTh>
               <ThemedTh className="text-left font-medium px-4 py-2  min-w-[150px]">
-                Value
+                Type
               </ThemedTh>
               <ThemedTh className="text-left  font-medium px-4 py-2  min-w-[150px]">
-                Description
+                Value
               </ThemedTh>
               <ThemedTh className="text-right px-4  min-w-[150px]">
-                <Button color="primary" disabled={true} variant="solid">
-                  Bulk Edit
-                </Button>
+                <div className="flex justify-end cursor-pointer">
+                  <Ellipsis />
+                </div>
               </ThemedTh>
             </tr>
           </thead>
           <tbody>
-            {params.map((param, index) => (
-              <tr key={param.id}>
+            {_variables.map((variable, index) => (
+              <tr key={variable.id}>
                 <ThemedTd className="px-1 py-1 ">
                   {lastInputIndex !== index ? (
                     <div className="flex justify-center">
                       <Checkbox
-                        name={`checked-${param.id}`}
-                        checked={param.checked}
-                        onChange={() => dispatch(checkQuery(param.id))}
+                        name={`checked-${variable.id}`}
+                        checked={variable.checked}
+                        onChange={() =>
+                          dispatch(checkVariableField(variable.id))
+                        }
                       />
                     </div>
                   ) : null}
                 </ThemedTd>
                 <ThemedTd className="px-1 py-1 ">
                   <Input
-                    key={param.id}
-                    value={param.key}
+                    key={variable.id}
+                    value={variable.key}
                     className="variable-input"
-                    placeholder="Key"
-                    name={`key-${param.id}`}
+                    placeholder="add new variable"
+                    name={`key-${variable.id}`}
                     onChange={(e) => {
                       dispatch(
-                        updateQuery({
-                          id: param.id,
+                        updateVariable({
+                          id: variable.id,
                           value: { key: e.target.value },
                         })
                       );
-                      dispatch(addQueryField());
+                      dispatch(addVariableField());
                     }}
                   />
                 </ThemedTd>
                 <ThemedTd className="px-1 py-1 ">
-                  <Input
-                    value={param.value}
+                  <Select
                     className="variable-input"
-                    placeholder="Value"
-                    name={`value-${param.id}`}
+                    style={{ width: "100%" }}
+                    value={variable.type}
+                    onChange={(e) =>
+                      dispatch(
+                        updateVariable({
+                          id: variable.id,
+                          value: { type: e },
+                        })
+                      )
+                    }
+                    options={[
+                      {
+                        label: "Default",
+                        value: "default",
+                      },
+                      {
+                        label: "Secret",
+                        value: "secret",
+                      },
+                    ]}
+                  />
+                </ThemedTd>
+                <ThemedTd className="px-1 py-1 ">
+                  <Input
+                    className="variable-input"
+                    value={variable.value}
+                    placeholder="variable value"
+                    name={`value-${variable.id}`}
                     onChange={(e) => {
                       dispatch(
-                        updateQuery({
-                          id: param.id,
+                        updateVariable({
+                          id: variable.id,
                           value: { value: e.target.value },
                         })
                       );
-                      dispatch(addQueryField());
-                    }}
-                  />
-                </ThemedTd>
-                <ThemedTd className="px-1 py-1 ">
-                  <Input
-                    className="variable-input"
-                    value={param.description}
-                    placeholder="Description"
-                    name={`description-${param.id}`}
-                    onChange={(e) => {
-                      dispatch(
-                        updateQuery({
-                          id: param.id,
-                          value: { description: e.target.value },
-                        })
-                      );
-                      dispatch(addQueryField());
+                      dispatch(addVariableField());
                     }}
                   />
                 </ThemedTd>
@@ -126,7 +142,9 @@ export default function VariableTable() {
                         <Trash2
                           size={20}
                           strokeWidth={1}
-                          onClick={() => dispatch(removeQueryField(param.id))}
+                          onClick={() =>
+                            dispatch(removeVariableField(variable.id))
+                          }
                         />
                       </button>
                     </div>
