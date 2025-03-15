@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store/store";
 
-interface bodyState {
+interface BodyState {
   body: string;
   file: File | null;
 }
 
-const initialState: bodyState = {
+const initialState: BodyState = {
   body: "{}",
   file: null,
 };

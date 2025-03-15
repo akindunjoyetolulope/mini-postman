@@ -2,11 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store/store";
 import { themeTypes } from "../model/themeType";
 
-interface themeState {
+interface ThemeState {
   theme: themeTypes;
 }
 
-const initialState: themeState = {
+const initialState: ThemeState = {
   theme: localStorage.getItem("theme") === "dark" ? "dark" : "light",
 };
 
