@@ -1,29 +1,40 @@
+import * as React from "react";
 import { Checkbox, Input, Select } from "antd";
 import { ThemedTd, ThemedTh } from "./CustomTable";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
+  activeVariable,
   addVariableField,
   checkVariableField,
   removeVariableField,
   updateVariable,
-  filterVariable,
+  // filterVariable,
   variables,
 } from "../../slices/variable-slice";
 import { Ellipsis, Search, Trash2 } from "lucide-react";
 
 export default function VariableTable() {
   const _variables = useAppSelector(variables);
+  const _activeVariable = useAppSelector(activeVariable);
   const dispatch = useAppDispatch();
 
-  const lastInputIndex = _variables.length - 1;
+  const variable = React.useMemo(
+    () => _variables.find((variable) => variable.id === _activeVariable),
+    [_variables, _activeVariable]
+  );
+
+  const lastInputIndex = variable ? variable.variables.length - 1 : -1;
 
   return (
     <div>
+      <div className="w-[250px] mt-2">
+        <h3 className="font-semibold">{variable?.name}</h3>
+      </div>
       <div className="w-[250px] my-2">
         <Input
           prefix={<Search size={20} strokeWidth={1} />}
           placeholder="Filter variable"
-          onChange={(e) => dispatch(filterVariable(e.target.value))}
+          // onChange={(e) => dispatch(filterVariable(e.target.value))}
         />
       </div>
       <div className="overflow-x-auto">
@@ -60,16 +71,16 @@ export default function VariableTable() {
             </tr>
           </thead>
           <tbody>
-            {_variables.map((variable, index) => (
-              <tr key={variable.id}>
+            {variable?.variables.map((variable, index) => (
+              <tr key={variable.variableId}>
                 <ThemedTd className="px-1 py-1 ">
                   {lastInputIndex !== index ? (
                     <div className="flex justify-center">
                       <Checkbox
-                        name={`checked-${variable.id}`}
+                        name={`checked-${variable.variableId}`}
                         checked={variable.checked}
                         onChange={() =>
-                          dispatch(checkVariableField(variable.id))
+                          dispatch(checkVariableField(variable.variableId))
                         }
                       />
                     </div>
@@ -77,15 +88,15 @@ export default function VariableTable() {
                 </ThemedTd>
                 <ThemedTd className="px-1 py-1 ">
                   <Input
-                    key={variable.id}
+                    key={variable.variableId}
                     value={variable.key}
                     className="variable-input"
                     placeholder="add new variable"
-                    name={`key-${variable.id}`}
+                    name={`key-${variable.variableId}`}
                     onChange={(e) => {
                       dispatch(
                         updateVariable({
-                          id: variable.id,
+                          id: variable.variableId,
                           value: { key: e.target.value },
                         })
                       );
@@ -101,7 +112,7 @@ export default function VariableTable() {
                     onChange={(e) =>
                       dispatch(
                         updateVariable({
-                          id: variable.id,
+                          id: variable.variableId,
                           value: { type: e },
                         })
                       )
@@ -123,11 +134,11 @@ export default function VariableTable() {
                     className="variable-input"
                     value={variable.value}
                     placeholder="variable value"
-                    name={`value-${variable.id}`}
+                    name={`value-${variable.variableId}`}
                     onChange={(e) => {
                       dispatch(
                         updateVariable({
-                          id: variable.id,
+                          id: variable.variableId,
                           value: { value: e.target.value },
                         })
                       );
@@ -143,7 +154,7 @@ export default function VariableTable() {
                           size={20}
                           strokeWidth={1}
                           onClick={() =>
-                            dispatch(removeVariableField(variable.id))
+                            dispatch(removeVariableField(variable.variableId))
                           }
                         />
                       </button>

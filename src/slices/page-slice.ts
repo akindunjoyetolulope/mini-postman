@@ -7,7 +7,7 @@ interface PageState {
 }
 
 const initialState: PageState = {
-  page: "Collection",
+  page: "Environment",
 };
 
 const pageSlice = createSlice({
