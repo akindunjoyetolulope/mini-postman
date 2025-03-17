@@ -4,17 +4,41 @@ import { VariableType } from "../model/variables";
 import { v4 as uuidv4 } from "uuid";
 
 interface VariableState {
-  variable: VariableType[];
+  variables: VariableType[];
+  activeVariable: string;
 }
 
 const initialState: VariableState = {
-  variable: [
+  activeVariable: "global88b1-4b7d-8f7d-1c1d1d",
+  variables: [
+    {
+      id: "global88b1-4b7d-8f7d-1c1d1d",
+      name: "Global Variables",
+      canNameChange: false,
+      variables: [
+        {
+          variableId: uuidv4(),
+          checked: false,
+          key: "",
+          value: "",
+          type: "default",
+        },
+      ],
+    },
     {
       id: uuidv4(),
-      checked: false,
-      key: "",
-      value: "",
-      type: "default",
+      name: "New Environment",
+      canNameChange: true,
+      active: false,
+      variables: [
+        {
+          variableId: uuidv4(),
+          checked: false,
+          key: "",
+          value: "",
+          type: "default",
+        },
+      ],
     },
   ],
 };
@@ -23,68 +47,131 @@ const variableSlice = createSlice({
   name: "variables",
   initialState,
   reducers: {
-    setVariable(state, action: PayloadAction<VariableState["variable"]>) {
-      state.variable = action.payload;
+    setActiveVariable(state, action: PayloadAction<string>) {
+      state.activeVariable = action.payload;
+    },
+    setVariable(state, action: PayloadAction<VariableState["variables"]>) {
+      state.variables = action.payload;
     },
     updateVariable(
       state,
       action: PayloadAction<{ id: string; value: { [key: string]: string } }>
     ) {
-      const variableIndex = state.variable.find(
-        (variable) => variable.id === action.payload.id
+      const variableIndex = state.variables.findIndex(
+        (variable) => variable.id === state.activeVariable
       );
-      if (variableIndex) {
-        state.variable = state.variable.map((variable) =>
-          variable.id === action.payload.id
-            ? { ...variable, ...action.payload.value }
-            : variable
+      const _variable = state.variables.find(
+        (v) => v.id === state.activeVariable
+      );
+      if (_variable) {
+        const variableFieldIndex = _variable.variables.findIndex(
+          (variable) => variable.variableId === action.payload.id
         );
+        if (variableFieldIndex !== -1) {
+          state.variables[variableIndex].variables[variableFieldIndex] = {
+            ...state.variables[variableIndex].variables[variableFieldIndex],
+            ...action.payload.value,
+          };
+        }
       }
     },
     addVariableField(state) {
-      const lastInput = state.variable[state.variable.length - 1];
-      if (lastInput.key.trim() !== "" || lastInput.value.trim() !== "") {
-        state.variable.push({
-          id: uuidv4(),
-          checked: false,
-          key: "",
-          value: "",
-          type: "default",
-        });
+      const variableIndex = state.variables.findIndex(
+        (variable) => variable.id === state.activeVariable
+      );
+      const _variable = state.variables.find(
+        (v) => v.id === state.activeVariable
+      );
+
+      if (_variable) {
+        const lastInput = _variable.variables[_variable.variables.length - 1];
+        if (lastInput.key.trim() !== "" || lastInput.value.trim() !== "") {
+          state.variables[variableIndex].variables.push({
+            variableId: uuidv4(),
+            checked: false,
+            key: "",
+            value: "",
+            type: "default",
+          });
+        }
       }
+    },
+    addVariable(state) {
+      state.variables.push({
+        id: uuidv4(),
+        name: "New Environment",
+        canNameChange: true,
+        variables: [
+          {
+            variableId: uuidv4(),
+            checked: false,
+            key: "",
+            value: "",
+            type: "default",
+          },
+        ],
+      });
     },
     removeVariableField(state, action: PayloadAction<string>) {
-      state.variable = state.variable.filter(
-        (variable) => variable.id !== action.payload
+      const variableIndex = state.variables.findIndex(
+        (variable) => variable.id === state.activeVariable
       );
-    },
-    checkVariableField(state, action: PayloadAction<string>) {
-      const variableIndex = state.variable.findIndex(
-        (variable) => variable.id === action.payload
+      const _variable = state.variables.find(
+        (v) => v.id === state.activeVariable
       );
-      if (variableIndex !== -1) {
-        state.variable[variableIndex].checked =
-          !state.variable[variableIndex].checked;
+      if (_variable) {
+        state.variables[variableIndex].variables = _variable.variables.filter(
+          (variable) => variable.variableId !== action.payload
+        );
       }
     },
-    filterVariable(state, action: PayloadAction<string>) {
-      state.variable = state.variable.filter(
-        (variable) =>
-          variable.key.includes(action.payload.trim()) ||
-          variable.value.includes(action.payload.trim())
+    checkVariableField(state, action: PayloadAction<string>) {
+      const variableIndex = state.variables.findIndex(
+        (variable) => variable.id === state.activeVariable
       );
+      const _variable = state.variables.find(
+        (v) => v.id === state.activeVariable
+      );
+      if (_variable) {
+        const variableFieldIndex = _variable.variables.findIndex(
+          (variable) => variable.variableId === action.payload
+        );
+        if (variableFieldIndex !== -1) {
+          state.variables[variableIndex].variables[variableFieldIndex].checked =
+            !state.variables[variableIndex].variables[variableFieldIndex]
+              .checked;
+        }
+      }
+    },
+    setActiveEnvironment(state, action: PayloadAction<string>) {
+      state.variables = state.variables.map((variable) => {
+        if (variable.id === action.payload) {
+          return {
+            ...variable,
+            active: !variable.active,
+          };
+        }
+        return {
+          ...variable,
+          active: false,
+        };
+      });
     },
   },
 });
 
 export const { setVariable } = variableSlice.actions;
-export const variables = (state: RootState) => state.variables.variable;
+export const variables = (state: RootState) => state.variables.variables;
+export const activeVariable = (state: RootState) =>
+  state.variables.activeVariable;
 export const {
   addVariableField,
   updateVariable,
   removeVariableField,
+  setActiveVariable,
   checkVariableField,
-  filterVariable,
+  setActiveEnvironment,
+  addVariable,
 } = variableSlice.actions;
 
 export default variableSlice.reducer;
