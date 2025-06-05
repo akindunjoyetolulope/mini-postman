@@ -2,6 +2,7 @@ import * as React from "react";
 import { Input, Radio, RadioChangeEvent } from "antd";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { body, setBody, setFile } from "../slices/body-slice";
+import JsonEditor from "./ui/JsonEditor";
 
 export default function BodySection() {
   const [value, setValue] = React.useState(1);
@@ -57,6 +58,8 @@ export default function BodySection() {
           />
         </div>
       )}
+
+      <JsonEditor />
     </div>
   );
 }

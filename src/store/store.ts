@@ -6,6 +6,7 @@ import BodyReducer from "../slices/body-slice";
 import UrlReducer from "../slices/url-slice";
 import PageReducer from "../slices/page-slice";
 import ThemeReducer from "../slices/theme-slice";
+import variablesReducer from "../slices/variable-slice";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     url: UrlReducer,
     page: PageReducer,
     theme: ThemeReducer,
+    variables: variablesReducer,
   },
 });
 

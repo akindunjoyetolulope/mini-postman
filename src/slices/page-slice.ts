@@ -2,12 +2,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store/store";
 import { pageTypes } from "../model/pageType";
 
-interface pageState {
+interface PageState {
   page: pageTypes;
 }
 
-const initialState: pageState = {
-  page: "Collection",
+const initialState: PageState = {
+  page: "Environment",
 };
 
 const pageSlice = createSlice({

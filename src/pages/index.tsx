@@ -10,6 +10,9 @@ import { pageType, setPageType } from "../slices/page-slice";
 import { pageTypes } from "../model/pageType";
 import { setTheme, themeType } from "../slices/theme-slice";
 import { themeTypes } from "../model/themeType";
+import VariableSection, {
+  VariableSideNav,
+} from "../components/VariableSection";
 
 const { Header, Content, Footer } = Layout;
 
@@ -51,21 +54,28 @@ const Dashboard = () => {
             style={{ boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)" }}
           >
             {getScreenWidth() > 1280 && (
-              <Splitter.Panel
-                defaultSize="30%"
-                min="20%"
-                max="40%"
-              ></Splitter.Panel>
+              <Splitter.Panel defaultSize="25%" min="22%" max="40%">
+                {_pageType === "Environment" && <VariableSideNav />}
+              </Splitter.Panel>
             )}
             <Splitter.Panel>
-              <Splitter layout="vertical">
-                <Splitter.Panel min="17%" max="95%">
-                  <RequestForm onResponse={setResponse} />
-                </Splitter.Panel>
-                <Splitter.Panel>
-                  <ResponseViewer response={response} />
-                </Splitter.Panel>
-              </Splitter>
+              {_pageType === "Environment" && (
+                <Splitter layout="vertical">
+                  <Splitter.Panel>
+                    <VariableSection />
+                  </Splitter.Panel>
+                </Splitter>
+              )}
+              {_pageType === "Collection" && (
+                <Splitter layout="vertical">
+                  <Splitter.Panel min="17%" max="95%">
+                    <RequestForm onResponse={setResponse} />
+                  </Splitter.Panel>
+                  <Splitter.Panel>
+                    <ResponseViewer response={response} />
+                  </Splitter.Panel>
+                </Splitter>
+              )}
             </Splitter.Panel>
           </Splitter>
         </Content>

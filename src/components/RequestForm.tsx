@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { apiKey, authType, bearerToken } from "../slices/authorization-slice";
 import HeadersSection from "./HeadersSection";
 import { headers } from "../slices/header-slice";
-import VariableTable from "./ui/VariableTable";
+import ParamTable from "./ui/ParamTable";
 import { methodType, setMethodType } from "../slices/method-slice";
 import { methodTypes } from "../model/methodType";
 import BodySection from "./BodySection";
@@ -109,7 +109,7 @@ const RequestForm = ({ onResponse }: { onResponse: (res: any) => void }) => {
     {
       key: "1",
       label: "Params",
-      children: <VariableTable />,
+      children: <ParamTable />,
     },
     {
       key: "2",
