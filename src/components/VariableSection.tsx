@@ -85,10 +85,15 @@ export const VariableSideNav = () => {
             }`}
             onClick={() => dispatch(setActiveVariable(variable.id))}
           >
-            <div className="h-full py-1">{variable.name}</div>
+            <div className="h-full py-1">
+              <input value={variable.name} />
+            </div>
             {variable.canNameChange && (
               <div className="flex items-center gap-1">
-                <div className="cursor-pointer">
+                <div
+                  className="cursor-pointer"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   {!variable.active ? (
                     <CircleCheck
                       size={20}
