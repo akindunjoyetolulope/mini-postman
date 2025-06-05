@@ -1,10 +1,8 @@
 import * as React from "react";
-import { Input, Radio, RadioChangeEvent, Select } from "antd";
+import { Input, Radio, RadioChangeEvent } from "antd";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { body, setBody, setFile } from "../slices/body-slice";
 import JsonEditor from "./ui/JsonEditor";
-
-const { Option } = Select;
 
 export default function BodySection() {
   const [value, setValue] = React.useState(1);
@@ -14,13 +12,6 @@ export default function BodySection() {
   const onChange = (e: RadioChangeEvent) => {
     setValue(e.target.value);
   };
-
-  const selectBefore = (
-    <Select defaultValue="bvn">
-      <Option value="bvn">BVN</Option>
-      <Option value="nin">NIN</Option>
-    </Select>
-  );
 
   return (
     <div>
@@ -68,7 +59,6 @@ export default function BodySection() {
         </div>
       )}
 
-      <Input addonBefore={selectBefore} defaultValue="bnv" />
       <JsonEditor />
     </div>
   );
